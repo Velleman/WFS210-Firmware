@@ -1,0 +1,1 @@
+hexmate -CK=0-4BFFF@51FF4w2g-1 WFS210_filled.hex >> WFS210_unified.hex

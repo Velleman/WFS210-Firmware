@@ -1,0 +1,177 @@
+; ========================================================================
+; WFS210 Driver
+; ========================================================================
+
+; ========================================================================
+; By convention, the Version section appears first in INF files.
+; Every INF file must have this section.
+; ========================================================================
+[Version]
+
+; ------------------------------------------------------------------------
+; Signature
+; ------------------------------------------------------------------------
+; Must be $Windows NT$ or $Chicago$. This indicates the operating systems
+; for which this INF is valid.
+;    "$Windows NT$"=All Windows operating systems
+;    "$Chicago$"=All Windows operating systems
+;
+Signature="$Windows NT$"
+
+; ------------------------------------------------------------------------
+; Class
+; ------------------------------------------------------------------------
+; For any standard type of device, this specifies the name of the device
+; setup class for the type of device that is installed by using this INF file.
+;
+; System-Defined Device Setup Classes Available to Vendors (Windows Drivers)
+;    Ports (COM & LPT ports) Class=Ports
+;    ClassGuid={4d36e978-e325-11ce-bfc1-08002be10318}
+;    This class includes serial and parallel port devices. See also the MultiportSerial class.
+;
+Class=Ports
+ClassGuid={4d36e978-e325-11ce-bfc1-08002be10318}
+
+; ------------------------------------------------------------------------
+; Provider
+; ------------------------------------------------------------------------
+; Identifies the provider of the INF file. Typically, this is specified as an
+; %OrganizationName% token that is expanded later in the INF file's Strings section.
+;
+Provider=%Velleman%
+
+; ------------------------------------------------------------------------
+; LayoutFile
+; ------------------------------------------------------------------------
+; If the files to support the device are included with the operating
+; system, the INF must specify a LayoutFile entry in the Version section.
+; Such an entry specifies where the files reside on the operating
+; system media.
+;
+LayoutFile=layout.inf
+
+; ------------------------------------------------------------------------
+; CatalogFile
+; ------------------------------------------------------------------------
+; Specifies a catalog (.cat) file to be included on the distribution media
+; of a device/driver. 
+;
+CatalogFile=wfs210.cat
+
+; ------------------------------------------------------------------------
+; DriverVer
+; ------------------------------------------------------------------------
+; This entry specifies version information for drivers that are installed
+; by this INF file. Starting with Windows 2000, this entry is required.
+;
+DriverVer=04/27/2012,5.1.2600.0
+
+; ------------------------------------------------------------------------
+; SourceDisksFiles and SourceDisksNames, don't need them
+; ------------------------------------------------------------------------
+[SourceDisksFiles]
+[SourceDisksNames]
+
+; ========================================================================
+; Manufacturer
+; ========================================================================
+[Manufacturer]
+
+; ------------------------------------------------------------------------
+; Uniquely identifies a manufacturer and an INF section that contains
+; information that identifies a manufacturer's device models.
+; ------------------------------------------------------------------------
+%Velbus%=DeviceList,NTamd64
+
+; ========================================================================
+; DestinationDirs
+; ========================================================================
+[DestinationDirs]
+
+; ------------------------------------------------------------------------
+; Specifies the default destination directory for all copy, delete,
+; and/or rename operations on files that are not explicitly listed in
+; a file-list-section referenced by other entries here.
+; ------------------------------------------------------------------------
+DefaultDestDir=12 ; \Drivers on WinNT platforms
+
+; ========================================================================
+; Our own device model sections, with install section names
+; and hardware ids
+; ========================================================================
+
+[DeviceList]
+%WFS210%=WFS210,USB\VID_10CF&PID_A210
+
+[DeviceList.NTamd64]
+%WFS210%=WFS210.NTamd64,USB\VID_10CF&PID_A210
+
+; ========================================================================
+; Install sections
+; ========================================================================
+
+; ------------------------------------------------------------------------
+; Shared
+; ------------------------------------------------------------------------
+[DriverCopyFiles]
+usbser.sys,,,0x20
+
+[DriverService] 
+DisplayName=%DriverService%
+ServiceType=1
+StartType=3
+ErrorControl=1
+ServiceBinary=%12%\usbser.sys
+
+; ------------------------------------------------------------------------
+; 32-bit
+; ------------------------------------------------------------------------
+
+[WFS210.nt] 
+Include=mdmcpq.inf
+CopyFiles=DriverCopyFiles
+AddReg=WFS210.nt.AddReg 
+
+[WFS210.nt.AddReg] 
+HKR,,DevLoader,,*ntkern 
+HKR,,NTMPDriver,,usbser.sys 
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider" 
+
+[WFS210.nt.Services] 
+AddService=usbser, 0x00000002, DriverService
+
+[WFS210.nt.HW]
+include=mdmcpq.inf
+
+; ------------------------------------------------------------------------
+; 64-bit
+; ------------------------------------------------------------------------
+
+[WFS210.NTamd64] 
+include=mdmcpq.inf
+CopyFiles=DriverCopyFiles
+AddReg=WFS210.NTamd64.AddReg 
+
+[WFS210.NTamd64.AddReg] 
+HKR,,DevLoader,,*ntkern 
+HKR,,NTMPDriver,,usbser.sys 
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider" 
+
+[WFS210.NTamd64.Services] 
+AddService=usbser,0x00000002,DriverService
+
+[WFS210.NTamd64.HW]
+include=mdmcpq.inf
+
+; ========================================================================
+; Strings
+; ========================================================================
+[Strings]
+
+; ------------------------------------------------------------------------
+; An INF file must have at least one Strings section to define every
+; %strkey% token specified elsewhere in that INF.
+; ------------------------------------------------------------------------
+Velleman="Velleman Instruments"
+WFS210="WFS210 2-Channel WiFi Scope 2 Channel 10MS/s"
+DriverService="WFS210 Driver"

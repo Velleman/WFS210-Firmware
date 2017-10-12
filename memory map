@@ -1,0 +1,13 @@
+Memory map info for bootloader
+
+
+program application space:		0x000000 ... 0x025FFE
+program flash calibration data:	0x026000 ... 0x0267FE
+program flash reserved data:	0x026800 ... 0x028FF8
+program flash checksum data:	0x028FFA (two's complement of sum of all bytes of program application space)
+
+bootloader space:				0x029000 ... 0x02ABFE
+bootloader reset vector:		0x7FFFFC
+
+
+
